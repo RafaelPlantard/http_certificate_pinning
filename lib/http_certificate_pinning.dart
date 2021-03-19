@@ -17,11 +17,11 @@ class HttpCertificatePinning {
     _channel.setMethodCallHandler(_platformCallHandler);
   }
 
-  static Future<String> check({ String serverURL, Map<String, String> headerHttp, SHA sha, List<String> allowedSHAFingerprints, int timeout }) async {
+  static Future<String> check({ required String serverURL, Map<String, String>? headerHttp, required SHA? sha, required List<String> allowedSHAFingerprints, required int timeout }) async {
     final Map<String, dynamic> params = <String, dynamic>{
       "url" : serverURL,
       "headers" : headerHttp,
-      "type": sha.toString().split(".").last,
+      "type": sha?.toString().split(".").last,
       "fingerprints" : allowedSHAFingerprints.map((a) => a.replaceAll(":", "")).toList(),
       "timeout" : timeout
     };

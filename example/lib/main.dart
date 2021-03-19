@@ -14,13 +14,13 @@ class _PiningSslData {
   Map<String, String> headerHttp = new Map();
   String allowedSHAFingerprint = '';
   int timeout = 0;
-  SHA sha;
+  SHA? sha;
 }
 
 class _MyAppState extends State<MyApp> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   _PiningSslData _data = new _PiningSslData();
-  BuildContext scaffoldContext;
+  BuildContext? scaffoldContext;
 
   @override
   initState() {
@@ -28,9 +28,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  check(String url, String fingerprint, SHA sha, Map<String, String> headerHttp, int timeout) async {
+  check(BuildContext context, String url, String fingerprint, SHA? sha, Map<String, String> headerHttp, int timeout) async {
 
-    List<String> allowedShA1FingerprintList = new List();
+    List<String> allowedShA1FingerprintList = [];
     allowedShA1FingerprintList.add(fingerprint);
 
     try {
@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
       if (!mounted)
         return;
 
-      Scaffold.of(scaffoldContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         new SnackBar(
           content: new Text(checkMsg),
           duration: Duration(seconds: 1),
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
 
       );
     }catch (e){
-      Scaffold.of(scaffoldContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         new SnackBar(
           content: new Text(e.toString()),
           duration: Duration(seconds: 1),
@@ -68,12 +68,12 @@ class _MyAppState extends State<MyApp> {
 
   }
 
-  void submit() {
+  void submit(BuildContext context) {
     // First validate form.
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save(); // Save our form now.
+    if (_formKey.currentState?.validate() == true) {
+      _formKey.currentState?.save(); // Save our form now.
 
-      this.check(_data.serverURL, _data.allowedSHAFingerprint, _data.sha, _data.headerHttp, _data.timeout);
+      this.check(context, _data.serverURL, _data.allowedSHAFingerprint, _data.sha, _data.headerHttp, _data.timeout);
     }
   }
 
@@ -101,19 +101,19 @@ class _MyAppState extends State<MyApp> {
                               labelText: 'URL'
                           ),
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value?.isEmpty == true) {
                               return 'Please enter some url';
                             }
                           },
-                          onSaved: (String value) {
-                            this._data.serverURL = value;
+                          onSaved: (String? value) {
+                            this._data.serverURL = value ?? '';
                           }
                       ),
                       DropdownButton(
                         items: [DropdownMenuItem(child: Text(SHA.SHA1.toString()), value: SHA.SHA1,), DropdownMenuItem(child: Text(SHA.SHA256.toString()), value: SHA.SHA256,)],
                         value: _data.sha,
                         isExpanded: true,
-                        onChanged: (SHA val){
+                        onChanged: (SHA? val){
                           setState(() {
                             this._data.sha = val;
                           });
@@ -126,12 +126,12 @@ class _MyAppState extends State<MyApp> {
                               labelText: 'Fingerprint'
                           ),
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value?.isEmpty == true) {
                               return 'Please enter some fingerprint';
                             }
                           },
-                          onSaved: (String value) {
-                            this._data.allowedSHAFingerprint = value;
+                          onSaved: (String? value) {
+                            this._data.allowedSHAFingerprint = value ?? '';
                           }
                       ),
                       TextFormField(
@@ -142,24 +142,23 @@ class _MyAppState extends State<MyApp> {
                               labelText: 'Timeout'
                           ),
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value?.isEmpty == true) {
                               return 'Please enter some timeout';
                             }
                           },
-                          onSaved: (String value) {
-                            this._data.timeout = int.parse(value);
+                          onSaved: (String? value) {
+                            this._data.timeout = int.parse(value ?? '');
                           }
                       ),
                       Container(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           child: Text(
                             'Check',
                             style: TextStyle(
                                 color: Colors.white
                             ),
                           ),
-                          onPressed: () => submit(),
-                          color: Colors.blue,
+                          onPressed: () => submit(context)
                         ),
                         margin: EdgeInsets.only(
                             top: 20.0
