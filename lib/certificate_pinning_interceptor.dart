@@ -9,7 +9,10 @@ class CertificatePinningInterceptor extends Interceptor{
   CertificatePinningInterceptor(this._allowedSHAFingerprints);
 
   @override
-  Future onRequest(RequestOptions options) async {
+  Future onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
 
     final secure = await HttpCertificatePinning.check(
         serverURL: options.baseUrl,
@@ -20,7 +23,7 @@ class CertificatePinningInterceptor extends Interceptor{
     );
 
     if(secure.contains("CONNECTION_SECURE")){
-      return super.onRequest(options);
+      return super.onRequest(options, handler);
     }else{
       throw Exception("CONNECTION_NOT_SECURE");
     }

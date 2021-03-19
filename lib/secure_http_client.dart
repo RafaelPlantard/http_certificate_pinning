@@ -22,14 +22,14 @@ class SecureHttpClient extends http.BaseClient {
     );
   }
 
-  Future<Response> head(url, {required Map<String, String> headers}) =>
+  Future<Response> head(url, {Map<String, String>? headers}) =>
       _sendUnstreamed("HEAD", url, headers);
 
   Future<Response> get(url, {Map<String, String>? headers}) =>
       _sendUnstreamed("GET", url, headers);
 
   Future<Response> post(url,
-      {required Map<String, String> headers, body, Encoding? encoding}) =>
+      {Map<String, String>? headers, body, Encoding? encoding}) =>
       _sendUnstreamed("POST", url, headers, body, encoding);
 
   Future<Response> put(url,
@@ -40,8 +40,9 @@ class SecureHttpClient extends http.BaseClient {
       {Map<String, String>? headers, body, Encoding? encoding}) =>
       _sendUnstreamed("PATCH", url, headers, body, encoding);
 
-  Future<Response> delete(url, {Map<String, String>? headers}) =>
-      _sendUnstreamed("DELETE", url, headers);
+  Future<Response> delete(Uri url,
+          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+      _sendUnstreamed("DELETE", url, headers, body, encoding);
 
   Future<String> read(url, {Map<String, String>? headers}) {
     return get(url, headers: headers).then((response) {
